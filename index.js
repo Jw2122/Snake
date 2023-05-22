@@ -51,34 +51,25 @@ function updateHighscore() {
 }
 
 function move() {
+
   if (!gamestopped) {
     if (snake[0].x <= 0 && actDir === "left") {
       stopGame();
+      return;
     } else if (snake[0].x >= width-1 && actDir === "right") {
       stopGame();
+      return;
     } else if (snake[0].y <= 0 && actDir === "up") {
       stopGame();
+      return;
     } else if (snake[0].y >= height-1 && actDir === "down") {
       stopGame();
+      return;
     }
     for (let i = snake.length; i > 1; i--) {
       snake[i-1].x = snake[i-2].x;
       snake[i-1].y = snake[i-2].y;
     }
-
-    snake.forEach((box, index)=> {
-      snake.forEach((box1, index1)=> {
-        if (index !== index1) {
-          if (box.x === box1.x) {
-            if (box.y === box1.y) {
-              console.log(index !== index1, box.x === box1.x && box.y === box1.y);
-            }
-          }
-          console.log(index, index1);
-        }
-      });
-      console.log(index);
-    });
 
     console.log('move');
 
@@ -92,6 +83,22 @@ function move() {
     } else if (actDir === "down") {
       snake[0].y += 1;
     }
+
+    snake.forEach((e, i)=> {
+      if (i !== 0) {
+        if (e.x === snake[0].x &&
+          e.y === snake[0].y) {
+          stopGame();
+        }
+      }
+    });
+
+
+    if (apple.x === snake[0].x && apple.y === snake[0].y) {
+      spawnFood();
+      addBlock();
+    }
+
 
     draw();
 
@@ -139,11 +146,6 @@ function draw() {
   ctx.fillStyle = 'red';
   ctx.fillRect(apple.x*100 +5, apple.y*100+5, 90, 90);
   ctx.fill();
-
-  if (apple.x === snake[0].x && apple.y === snake[0].y) {
-    spawnFood();
-    addBlock();
-  }
 }
 
 setInterval(e=> {
@@ -246,3 +248,5 @@ if (highscore === "") {
 
 
 console.log('script loaded');
+
+local
