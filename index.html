@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Snake</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      height: 100%;
+      width: 100%;
+    }
+    #popup{
+      height: 50%;
+      width: 50%;
+      position: absolute;
+      background-color: white;
+      top: 25%;
+      left: 25%;
+      border: 0;
+      display: none;
+      justify-content: center;
+      background-color: white;
+      border: 1px solid black;
+      border-radius: 2vh;
+      align-items: center;
+      font-size: 5.5vh;
+    }
+    .hide{
+      display: none;
+    }
+    .show{
+      display: flex !important;
+    }
+    #restart{
+      width: 80%;
+      padding: 2vh;
+      font-size: 5vh;
+      border: 1px solid black;
+      border-radius: 2vh;
+      background-color: white;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      bottom: 5vw;
+    }
+    #text{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="popup" class="hide">
+    <div id="text">
+      Game Over
+    </div>
+    <button id="restart">
+      Restart
+    </button>
+  </div>
+  <canvas id="canvas"></canvas>
+
+  <script src="index.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
+
+
+<!-- hacking code:
+
+setInterval(e=> {
+  if (snake[0].x < apple.x) {
+    actDir = "right";
+  } else if (snake[0].x > apple.x) {
+    actDir = "left";
+  } else if (snake[0].y < apple.y) {
+    actDir = "down";
+  } else if (snake[0].y > apple.y) {
+    actDir = "up";
+  }
+}, 1000/5);
+
+-->
