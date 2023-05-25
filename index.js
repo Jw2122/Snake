@@ -6,21 +6,31 @@ const restart = document.getElementById('restart');
 const popup = document.getElementById('popup');
 const height = (Math.round(Math.sqrt(288 / window.innerWidth * window.innerHeight)));
 const width = (Math.round(Math.sqrt(288 / window.innerHeight* window.innerWidth)));
+const canvasWidth = canvas.offsetWidth;
+const canvasHeight = canvas.offsetHeight;
 canvas.setAttribute('height', height * 100);
 canvas.setAttribute('width', width * 100);
 let gamestopped = false;
 let highscore = getCookie("highscore");
-
 let images = {
   left: new Image(),
   right: new Image(),
   up: new Image(),
-  down: new Image()
+  down: new Image(),
+  pause: new Image(),
+  play: new Image(),
+  actPlayIcon: "",
+  apple: new Image()
 }
-images.left.src = 'img/head-left.png';
-images.right.src = 'img/head-right.png';
-images.up.src = 'img/head-up.png';
-images.down.src = 'img/head-down.png';
+
+images.left.src = 'img/head_left.png';
+images.right.src = 'img/head_right.png';
+images.up.src = 'img/head_up.png';
+images.down.src = 'img/head_down.png';
+images.pause.src = 'img/pause-black.png';
+images.play.src = 'img/play-black.png';
+images.actPlayIcon = images.pause;
+images.apple.src = "img/apple.png";
 
 
 
@@ -48,6 +58,8 @@ function updateHighscore() {
     highscore = snake.length;
     saveCookie("highscore", snake.length);
   }
+
+  if (true);
 }
 
 function move() {
@@ -105,17 +117,19 @@ function move() {
     clearTimeout(moveTimeout);
     moveTimeout = setTimeout(function() {
       move();
-    }, 1000/5);
+    }, 150);
   }
 }
 
+
+
 function stopGame() {
+  writeUserHighscore(snake.length);
   gamestopped = true;
   popup.classList.add("show");
   console.log("stopGame");
-  updateHighscore();
 }
-console.log(popup);
+
 
 function spawnFood() {
   apple.x = Math.round(Math.random()*(width-1));
@@ -133,24 +147,23 @@ function draw() {
   for (var i = 0; i < snake.length; i++) {
     let box = snake[i];
     ctx.beginPath();
-    ctx.fillStyle = '#D6A631';
-    if (i !== 0) {
-      ctx.fillRect(box.x*100+5, box.y*100+5, 90, 90);
-      ctx.fill();
-    } else {
+    ctx.fillStyle = '#80FF00';
+
+    ctx.fillRect(box.x*100+5, box.y*100+5, 90, 90);
+    ctx.fill();
+    if (i === 0) {
       ctx.drawImage(images[actDir], box.x*100 +5, box.y*100+5, 90, 90);
     }
   }
 
   ctx.beginPath();
   ctx.fillStyle = 'red';
-  ctx.fillRect(apple.x*100 +5, apple.y*100+5, 90, 90);
+  ctx.drawImage(images.apple,apple.x * 100 + 5, apple.y * 100 + 5, 90, 90);
   ctx.fill();
-}
 
-setInterval(e=> {
-  // move();
-}, 1000 /5);
+  ctx.drawImage(images.actPlayIcon, width * 90, width * 1, width * 8, width* 8);
+
+}
 
 move();
 
@@ -198,7 +211,7 @@ window.addEventListener('touchend', function(e) {
     } else if (angle > 45 && angle < 135 && (actDir !== 'up' || snake.length === 1)) {
       actDir = 'down';
     }
-    if (gamestopped = false) {
+    if (gamestopped === false &&  images.actPlayIcon=== images.pause) {
       move();
     }
   }
@@ -218,7 +231,6 @@ restart.addEventListener('click', e=> {
 });
 
 function getCookie(cname) {
-
   let name = cname + "=";
 
   let decodedCookie = decodeURIComponent(document.cookie);
@@ -243,8 +255,84 @@ if (highscore === "") {
   highscore = snake.length;
 }
 
+function pause(makePause) {
+  if (makePause) {
+    clearTimeout(moveTimeout);
+  } else {
+    move();
+  }
+}
+
+canvas.addEventListener('click', e=> {
+  if (images.actPlayIcon === images.pause&& e.clientX >= canvasWidth * 0.9 && e.clientY <= canvasWidth*0.1) {
+    pause(true);
+    images.actPlayIcon = images.play;
+    draw();
+    setTimeout(draw, 20);
+  } else if(true) {
+    pause(false);
+    images.actPlayIcon = images.pause;
+    draw();
+    move();
+    setTimeout(draw, 200);
+  }
+  console.log('pause button');
+});
 
 
 
 
-console.log('script loaded');
+// firebase database
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  child,
+  get
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_cmBPJgBP_QQ-UDvLtsDeahsWdI0AoV4",
+  authDomain: "snake3-8f68f.firebaseapp.com",
+  databaseURL: "https://snake3-8f68f-default-rtdb.firebaseio.com",
+  projectId: "snake3-8f68f",
+  storageBucket: "snake3-8f68f.appspot.com",
+  messagingSenderId: "439306922160",
+  appId: "1:439306922160:web:460fa228e1a617cd38f375",
+  measurementId: "G-M7J928N7DK"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase();
+
+
+
+function writeUserHighscore(points) {
+  let name = prompt("Gib einen Namen ein!");
+
+  set(ref(db, 'highscores/'+name),points);
+}
+
+/*
+const starCountRef = ref(db, 'posts/' + postId + '/starCount');
+onValue(starCountRef, (snapshot) => {
+  const data = snapshot.val();
+  updateStarCount(postElement, data);
+});
+
+const dbRef = ref(getDatabase());
+get(child(dbRef, `users/${userId}`)).then((snapshot) => {
+  if (snapshot.exists()) {
+    console.log(snapshot.val());
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
+});
+
+*/

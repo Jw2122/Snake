@@ -9,10 +9,11 @@
       padding: 0;
     }
     canvas {
-      height: 100%;
+      height: calc(100% - 10px);
       width: 100%;
+      border-bottom: 1px solid black;
     }
-    #popup{
+    #popup {
       height: 50%;
       width: 50%;
       position: absolute;
@@ -28,14 +29,14 @@
       align-items: center;
       font-size: 5.5vh;
     }
-    .hide{
+    .hide {
       display: none;
     }
-    .show{
+    .show {
       display: flex !important;
     }
-    #restart{
-      width: 80%;
+    #restart {
+      width: 80%;11
       padding: 2vh;
       font-size: 5vh;
       border: 1px solid black;
@@ -46,7 +47,7 @@
       justify-content: center;
       bottom: 5vw;
     }
-    #text{
+    #text {
       width: 100%;
       display: flex;
       justify-content: center;
@@ -65,7 +66,7 @@
   </div>
   <canvas id="canvas"></canvas>
 
-  <script src="index.js" type="module" charset="utf-8"></script>
+  <script src="index.js" type="module"charset="utf-8"></script>
 </body>
 </html>
 
@@ -83,5 +84,4 @@ setInterval(e=> {
     actDir = "up";
   }
 }, 1000/5);
-
 -->
